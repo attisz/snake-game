@@ -1,111 +1,54 @@
 package com.packt.snake;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.packt.snake.sprite.Apple;
+import com.packt.snake.sprite.Snake;
 
-import static com.badlogic.gdx.Gdx.gl;
 import static com.badlogic.gdx.graphics.Color.BLACK;
+import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
 
 public class GameScreen extends ScreenAdapter {
 
-    private static final float MOVE_TIME = 1F;
-    private static final int SNAKE_MOVEMENT = 32;
-    private static final int RIGHT = 0;
-    private static final int LEFT = 1;
-    private static final int UP = 2;
-    private static final int DOWN = 3;
+    private static final float TIME_WAIT = 0.2F;
 
     private SpriteBatch batch;
-    private Texture snakeHead;
-    private float timer = MOVE_TIME;
-    private int snakeX, snakeY;
-    private int snakeDirection = RIGHT;
+    private Snake snake;
+    private Apple apple;
+
+    private float timer;
 
     @Override
     public void show() {
+        timer = TIME_WAIT;
         batch = new SpriteBatch();
-        snakeHead = new Texture(Gdx.files.internal("snakehead.png"));
+        snake = new Snake();
+        apple = new Apple();
     }
 
     @Override
     public void render(float delta) {
-        queryInput();
-
         timer -= delta;
-        if (timer <= 0) {
-            timer = MOVE_TIME;
-            moveSnake();
-            checkForOuterBound();
-        }
 
+        if (timer < 0) {
+            timer = TIME_WAIT;
+            render();
+        }
+    }
+
+    private void render() {
         clearScreen();
-        draw();
-    }
+        snake.update();
 
-    private void queryInput() {
-        boolean leftPressed = Gdx.input.isKeyPressed(Input.Keys.LEFT);
-        boolean rightPressed = Gdx.input.isKeyPressed(Input.Keys.RIGHT);
-        boolean upPressed = Gdx.input.isKeyPressed(Input.Keys.UP);
-        boolean downPressed = Gdx.input.isKeyPressed(Input.Keys.DOWN);
-
-        if (leftPressed) {
-            snakeDirection = LEFT;
-        }
-        if (rightPressed) {
-            snakeDirection = RIGHT;
-        }
-        if (upPressed) {
-            snakeDirection = UP;
-        }
-        if (downPressed) {
-            snakeDirection = DOWN;
-        }
-    }
-
-    private void moveSnake() {
-        switch (snakeDirection) {
-            case RIGHT:
-                snakeX += SNAKE_MOVEMENT;
-                break;
-            case LEFT:
-                snakeX -= SNAKE_MOVEMENT;
-                break;
-            case UP:
-                snakeY += SNAKE_MOVEMENT;
-                break;
-            case DOWN:
-                snakeY -= SNAKE_MOVEMENT;
-                break;
-        }
-    }
-
-    private void checkForOuterBound() {
-        if (snakeX >= Gdx.graphics.getWidth()) {
-            snakeX = 0;
-        }
-        if (snakeX < 0) {
-            snakeX = Gdx.graphics.getWidth() - SNAKE_MOVEMENT;
-        }
-        if (snakeY >= Gdx.graphics.getHeight()) {
-            snakeY = 0;
-        }
-        if (snakeY < 0) {
-            snakeY = Gdx.graphics.getHeight() - SNAKE_MOVEMENT;
-        }
+        batch.begin();
+        snake.draw(batch);
+        //apple.draw(batch);
+        batch.end();
     }
 
     private void clearScreen() {
-        gl.glClearColor(BLACK.r, BLACK.g, BLACK.b, BLACK.a);
-        gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-    }
-
-    private void draw() {
-        batch.begin();
-        batch.draw(snakeHead, snakeX, snakeY);
-        batch.end();
+        Gdx.gl.glClearColor(BLACK.r, BLACK.g, BLACK.b, BLACK.a);
+        Gdx.gl.glClear(GL_COLOR_BUFFER_BIT);
     }
 }
