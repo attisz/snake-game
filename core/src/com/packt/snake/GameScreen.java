@@ -1,17 +1,18 @@
 package com.packt.snake;
 
+import static com.badlogic.gdx.graphics.Color.BLACK;
+import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.packt.snake.sprite.Apple;
 import com.packt.snake.sprite.Snake;
 
-import static com.badlogic.gdx.graphics.Color.BLACK;
-import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
-
 public class GameScreen extends ScreenAdapter {
 
-    private static final float TIME_WAIT = 0.2F;
+    private static final float TIME_WAIT = 1F;
+    public static final int GRID_SIZE = 32;
 
     private SpriteBatch batch;
     private Snake snake;
@@ -21,7 +22,6 @@ public class GameScreen extends ScreenAdapter {
 
     @Override
     public void show() {
-        timer = TIME_WAIT;
         batch = new SpriteBatch();
         snake = new Snake();
         apple = new Apple();
@@ -30,21 +30,38 @@ public class GameScreen extends ScreenAdapter {
     @Override
     public void render(float delta) {
         timer -= delta;
-
-        if (timer < 0) {
+        if (timer <= 0) {
             timer = TIME_WAIT;
-            render();
+            reCalculate();
         }
+        draw();
     }
 
-    private void render() {
-        clearScreen();
-        snake.update();
+    private void reCalculate() {
+        snake.updateState();
 
+        if (snakeEatApple()) {
+            updateApple();
+        }
+
+    }
+
+    private void draw() {
+        clearScreen();
         batch.begin();
         snake.draw(batch);
-        //apple.draw(batch);
+        apple.draw(batch);
         batch.end();
+    }
+
+    private boolean snakeEatApple() {
+        return snake.isCoordinatePartOf(apple.getX(), apple.getY());
+    }
+
+    private void updateApple() {
+        do {
+            apple.updateState();
+        } while (snake.isCoordinatePartOf(apple.getX(), apple.getY()));
     }
 
     private void clearScreen() {

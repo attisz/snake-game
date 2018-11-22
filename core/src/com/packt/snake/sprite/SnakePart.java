@@ -6,4 +6,9 @@ class SnakePart extends Sprite {
     SnakePart(Texture texture) {
         super(texture);
     }
+
+    @Override
+    public void updateState() {
+
+    }
 }

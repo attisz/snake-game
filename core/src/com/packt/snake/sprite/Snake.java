@@ -1,13 +1,13 @@
 package com.packt.snake.sprite;
 
+import static com.packt.snake.GameScreen.GRID_SIZE;
+import static com.packt.snake.sprite.Direction.RIGHT;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
-
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.packt.snake.sprite.Direction.RIGHT;
 
 public class Snake implements Drawable {
 
@@ -21,16 +21,36 @@ public class Snake implements Drawable {
     }
 
     @Override
+    public void updateState() {
+        switch (direction) {
+            case RIGHT:
+                head.setX(head.getX() + GRID_SIZE);
+                break;
+            case LEFT:
+                head.setX(head.getX() - GRID_SIZE);
+                break;
+            case UP:
+                head.setY(head.getY() + GRID_SIZE);
+                break;
+            case DOWN:
+                head.setY(head.getY() - GRID_SIZE);
+                break;
+        }
+    }
+
+    @Override
     public void draw(Batch batch) {
         head.draw(batch);
         body.forEach(snakePart -> snakePart.draw(batch));
     }
 
-    public void setDirection(Direction direction) {
-        this.direction = direction;
+    @Override
+    public boolean isCoordinatePartOf(float x, float y) {
+        return head.isCoordinatePartOf(x, y) ||
+            body.stream().anyMatch(p -> p.isCoordinatePartOf(x, y));
     }
 
-    public void update() {
-
+    public void setDirection(Direction direction) {
+        this.direction = direction;
     }
 }
