@@ -11,33 +11,45 @@ import com.packt.snake.sprite.Snake;
 
 public class GameScreen extends ScreenAdapter {
 
-    private static final float TIME_WAIT = 1F;
+    private static final float TIME_WAIT = 0.2F;
     public static final int GRID_SIZE = 32;
 
     private SpriteBatch batch;
     private Snake snake;
     private Apple apple;
 
+    private InputControl inputControl;
     private float timer;
 
     @Override
     public void show() {
         batch = new SpriteBatch();
+        inputControl = new InputControl();
         snake = new Snake();
         apple = new Apple();
     }
 
     @Override
     public void render(float delta) {
-        timer -= delta;
-        if (timer <= 0) {
-            timer = TIME_WAIT;
-            reCalculate();
-        }
+        sampleInput();
+        reCalculateStateWithTiming(delta);
         draw();
     }
 
-    private void reCalculate() {
+    private void sampleInput() {
+        inputControl.getNewDirection()
+            .ifPresent(newDirection -> snake.setDirection(newDirection));
+    }
+
+    private void reCalculateStateWithTiming(float delta) {
+        timer -= delta;
+        if (timer <= 0) {
+            timer = TIME_WAIT;
+            reCalculateStates();
+        }
+    }
+
+    private void reCalculateStates() {
         snake.updateState();
 
         if (snakeEatApple()) {
