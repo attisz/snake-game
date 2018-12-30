@@ -7,6 +7,8 @@ import com.packt.snake.actor.ActorFactoryImpl;
 
 public class SnakeGame extends Game {
 
+    public static final float DEFAULT_STATE_UPDATE_RATE = 1.0F;
+
     private Graphics graphics;
 
     @Override

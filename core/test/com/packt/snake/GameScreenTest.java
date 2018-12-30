@@ -11,6 +11,7 @@ import static org.mockito.Mockito.when;
 
 import com.packt.snake.actor.Actor;
 import com.packt.snake.actor.ActorFactory;
+import com.packt.snake.render.ActorRenderer;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -28,6 +29,9 @@ public class GameScreenTest {
 
     @Mock
     Actor actor;
+
+    @Mock
+    ActorRenderer actorRenderer;
 
     @Test
     public void actorsCreatedOnlyOnShow() {
@@ -48,5 +52,16 @@ public class GameScreenTest {
         gameScreen.render(0f);
 
         verify(actor, times(3)).stateUpdate();
+    }
+
+    @Test
+    public void onRenderActorsAreRendered() {
+        when(actorFactory.createActor(SNAKE)).thenReturn(actor);
+
+        gameScreen.show();
+
+        gameScreen.render(0f);
+
+        verify(actorRenderer, times(1)).render(actor);
     }
 }
