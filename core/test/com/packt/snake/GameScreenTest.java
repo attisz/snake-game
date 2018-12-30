@@ -28,30 +28,32 @@ public class GameScreenTest {
     ActorFactory actorFactory;
 
     @Mock
-    Actor actor;
+    ActorRenderer actorRenderer;
 
     @Mock
-    ActorRenderer actorRenderer;
+    Actor actor;
 
     @Test
     public void actorsCreatedOnlyOnShow() {
+        when(actorFactory.createActor(SNAKE)).thenReturn(actor);
+
         assertThat(gameScreen.getActors(), empty());
         gameScreen.show();
         assertThat(gameScreen.getActors(), not(empty()));
     }
 
     @Test
-    public void onRenderActorsStateUpdateCalled() {
+    public void onRenderActorsStateUpdateCalledWithGivenRate() {
         when(actorFactory.createActor(SNAKE)).thenReturn(actor);
 
         gameScreen.show();
         verify(actor, never()).stateUpdate();
 
-        gameScreen.render(0f);
-        gameScreen.render(0f);
-        gameScreen.render(0f);
+        gameScreen.setRate(1f);
+        gameScreen.render(0.5f);
+        gameScreen.render(0.5f);
 
-        verify(actor, times(3)).stateUpdate();
+        verify(actor, times(1)).stateUpdate();
     }
 
     @Test
@@ -59,9 +61,10 @@ public class GameScreenTest {
         when(actorFactory.createActor(SNAKE)).thenReturn(actor);
 
         gameScreen.show();
-
+        gameScreen.render(0f);
+        gameScreen.render(0f);
         gameScreen.render(0f);
 
-        verify(actorRenderer, times(1)).render(actor);
+        verify(actorRenderer, times(3)).render(actor);
     }
 }

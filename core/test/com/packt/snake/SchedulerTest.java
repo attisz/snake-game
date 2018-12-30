@@ -15,7 +15,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 public class SchedulerTest {
 
     @InjectMocks
-    private Scheduler scheduler;
+    private Scheduler scheduler = new Scheduler(1.0F);
 
     @Mock
     private Runnable runnable1;

@@ -15,7 +15,7 @@ public class SnakeGame extends Game {
     public void create() {
         setScreen(
             new GameScreen(
-                new ActorFactoryImpl()));
+                new ActorFactoryImpl(), (actor) -> System.out.println(actor.toString())));
     }
 
     @Override

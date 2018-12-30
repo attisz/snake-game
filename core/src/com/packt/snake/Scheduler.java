@@ -10,6 +10,10 @@ public class Scheduler {
     private float rate;
     private float timeElapsed;
 
+    public Scheduler(float rate) {
+        this.rate = rate;
+    }
+
     public void addTask(Runnable runnable) {
         tasks.add(runnable);
     }
